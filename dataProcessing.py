@@ -48,14 +48,22 @@ class dataProcessing(object):
 
     def CalAveragePlayedTime(self):
         self.listUser = self.listUser[(self.listUser['behavior'] == 'play')]
-        # print(self.listUser)
-        self.listUser = self.listUser[self.listUser.groupby('name').userId.transform(len) >= 20]
+        # print(self.listUser[(test.listUser['name'] == 'Rag Doll Kung Fu')])
+
+        # self.listUser = self.listUser[self.listUser.groupby('name').userId.transform(len) >= 20]
+
         self.listUser['name'].nunique()
+
         self.listUser['name'] = self.listUser['name'].astype(str)
+
         self.averagePlayedTime = self.listUser.groupby(['name'], as_index = False).hours.mean()
         self.averagePlayedTime['avg_hourplayed'] = self.averagePlayedTime['hours']
         self.averagePlayedTime.drop(columns = 'hours', inplace = True)
-        self.listUser = self.listUser.merge(self.averagePlayedTime, on = 'name')
+
+        self.listUser = self.listUser.merge(self.averagePlayedTime, how = 'left', on = 'name')
+        # print(self.listUser[(test.listUser['name'] == 'Rag Doll Kung Fu')])
+
+
         
 
     
@@ -81,9 +89,9 @@ test = dataProcessing(filename1, filename)
 test.CreateDataMatrix()
 # print(test.listUser)
 # test.CreateMatrixTable()
-# test.listUser = test.listUser[(test.listUser['userId'] == '249232725')]
+# print(test.listUser[(test.listUser['name'] == 'Rag Doll Kung Fu')])
 # print(test.listUser)
-# print(test.listUser[(test.listUser['userId'] == 59945701)])
+# print(test.dataUser[(test.dataUser['name'] == "Rag Doll Kung Fu")])
 # print(test.numberOfGame)
 # print(test.numberOfUser)
 # print(test.listUserId)

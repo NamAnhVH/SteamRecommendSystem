@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter.ttk import *
 import dataProcessing as dp
 import numpy as np
 import tkinter as tk
@@ -53,10 +54,18 @@ class GUI(tk.Tk):
         selectedUser = ",".join([self.listUserId.get(i) for i in selectedAllUser])
         dataUser = dp.test.listUser[(dp.test.listUser['userId'] == int(selectedUser))]
         locationUser = np.where((dp.test.listUser['userId'] == int(selectedUser)))
-        listSelectedUser = Listbox(self.panelData,width = 50, height = 30)
+        listSelectedUser = Treeview(self.panelData, columns = ["name","hours","rating"], show = "headings")
+        listSelectedUser.heading("name", text = 'Tên game')
+        listSelectedUser.heading("hours", text = 'Số giờ chơi')
+        listSelectedUser.heading("rating", text = 'Đánh giá')
         for line in range(len(dataUser)):
-            listSelectedUser.insert(END,dataUser['name'][locationUser[0][line]])
-        listSelectedUser.grid(column = 0, row = 0)    
+            listSelectedUser.insert("",END,values = [dataUser['name'][locationUser[0][line]],dataUser['hours'][locationUser[0][line]],dataUser['rating'][locationUser[0][line]]])
+        listSelectedUser.grid(column = 0, row = 0)             
+        # data = [dataUser]
+        # listSelectedUser = Listbox(self.panelData,width = 50, height = 30)
+        # for line in range(len(dataUser)):
+        #     listSelectedUser.insert(END,dataUser['name'][locationUser[0][line]])
+        # listSelectedUser.grid(column = 0, row = 0)    
 
     def ShowUserHaveGame(self,event):
         selectedAllGame = self.listNameGame.curselection()
@@ -83,10 +92,10 @@ class GUI(tk.Tk):
 
     def CreateButton(self):
         self.CreateListData()
-        self.button1 = Button(self.panelButton, text = "ListUser", bg='orange', fg='red', command = self.ShowListUserId)
+        self.button1 = Button(self.panelButton, text = "ListUser", command = self.ShowListUserId)
         self.button1.pack(fill = BOTH, expand = 1)
 
-        self.button3 = Button(self.panelButton, text = "ListGame", bg='orange', fg='red', command = self.ShowListGame)
+        self.button3 = Button(self.panelButton, text = "ListGame", command = self.ShowListGame)
         self.button3.pack(fill = BOTH, expand = 1)
 
 
