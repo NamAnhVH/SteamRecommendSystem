@@ -53,29 +53,29 @@ class GUI(tk.Tk):
         selectedAllUser = self.listUserId.curselection()
         selectedUser = ",".join([self.listUserId.get(i) for i in selectedAllUser])
         dataUser = dp.test.listUser[(dp.test.listUser['userId'] == int(selectedUser))]
-        locationUser = np.where((dp.test.listUser['userId'] == int(selectedUser)))
+        # locationUser = np.where((dp.test.listUser['userId'] == int(selectedUser)))
+        locationUser = dp.test.listUser[dp.test.listUser['userId'] == int(selectedUser)].index
         listSelectedUser = Treeview(self.panelData, columns = ["name","hours","rating"], show = "headings")
         listSelectedUser.heading("name", text = 'Tên game')
         listSelectedUser.heading("hours", text = 'Số giờ chơi')
         listSelectedUser.heading("rating", text = 'Đánh giá')
         for line in range(len(dataUser)):
-            listSelectedUser.insert("",END,values = [dataUser['name'][locationUser[0][line]],dataUser['hours'][locationUser[0][line]],dataUser['rating'][locationUser[0][line]]])
-        listSelectedUser.grid(column = 0, row = 0)             
-        # data = [dataUser]
-        # listSelectedUser = Listbox(self.panelData,width = 50, height = 30)
-        # for line in range(len(dataUser)):
-        #     listSelectedUser.insert(END,dataUser['name'][locationUser[0][line]])
-        # listSelectedUser.grid(column = 0, row = 0)    
+            listSelectedUser.insert("",END,values = [dataUser['name'][locationUser[line]],dataUser['hours'][locationUser[line]],dataUser['rating'][locationUser[line]]])
+        listSelectedUser.grid(column = 0, row = 0)                
 
     def ShowUserHaveGame(self,event):
         selectedAllGame = self.listNameGame.curselection()
         selectedGame = ",".join([self.listNameGame.get(i) for i in selectedAllGame])
         dataUserHaveGame = dp.test.listUser[(dp.test.listUser['name'] == selectedGame)]
-        locationGame = np.where((dp.test.listUser['name'] == selectedGame))
-        listSelectedUser = Listbox(self.panelData,width = 50, height = 30)
+        # locationGame = np.where((dp.test.listUser['name'] == selectedGame))
+        locationGame = dp.test.listUser[dp.test.listUser['name'] == selectedGame].index
+        listSelectedUser = Treeview(self.panelData, columns = ["avg_hourplayed","userId","rating"], show = "headings")
+        listSelectedUser.heading("avg_hourplayed", text = 'Thời gian chơi trung bình')
+        listSelectedUser.heading("userId", text = 'UserID')
+        listSelectedUser.heading("rating", text = 'Đánh giá')
         for line in range(len(dataUserHaveGame)):
-            listSelectedUser.insert(END,dataUserHaveGame['userId'][locationGame[0][line]])
-        listSelectedUser.grid(column = 0, row = 0)
+            listSelectedUser.insert("",END,values = [dataUserHaveGame['avg_hourplayed'][locationGame[line]],dataUserHaveGame['userId'][locationGame[line]],dataUserHaveGame['rating'][locationGame[line]]])
+        listSelectedUser.grid(column = 0, row = 0)   
 
     def CreateListData(self):
         self.CreatePanel()
@@ -85,7 +85,7 @@ class GUI(tk.Tk):
 
         self.listNameGame =  Listbox(self.panelList,width = 50, height = 30)
         for line in range(dp.test.numberOfGame):
-            self.listNameGame.insert(END,dp.test.listNameGame['name'][line])
+            self.listNameGame.insert(END,dp.test.listGame['name'][line])
 
         self.listUserId.bind('<<ListboxSelect>>',self.ShowUserData)
         self.listNameGame.bind('<<ListboxSelect>>',self.ShowUserHaveGame)
