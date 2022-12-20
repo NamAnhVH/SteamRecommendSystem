@@ -9,18 +9,41 @@ class TrainAndTestSplitting(object):
         self.data              = dataMatrix
         self.dataTrain         = []
         self.dataTest          = []
+        self.dataTrainPos       = []          
+        self.dataTestingPos     = []          
         self.numberOfTrain     = None
         self.numberOfTest      = None
         self.trainSize         = None
         self.testSize          = None
+        self.position           = {}
+        self.listUserId        = None
         
     def DataProcess(self):
-        # print(self.data)
         self.listUserId = list(set(self.data['userId'].values.tolist()))
+        self.userId = self.data['userId'].values.tolist()
         self.numberOfUser = len(self.listUserId)
-        # self.dataValue = self.data['rating'].values.tolist()
         self.listIndex = self.data.index
-        
+
+    def StratifiedSplitting(self):
+        for user in self.listUserId:
+            self.position[user][1] /= self.numberOfInstances
+            rand.shuffle(self.position[user][0])
+            k = int(self.numberOfTrain * self.position[user][1])
+            self.dataTrainPos.extend(self.position[user][0][: k])
+            self.dataTestingPos.extend(self.position[user][0][k :])
+        for idxTrain in self.dataTrainPos:
+            self.dataTrain.append([self.data['userId'][idxTrain],self.data['name'][idxTrain],self.data['rating'][idxTrain]])
+        for idxTest in self.dataTestingPos:
+            self.dataTest.append([self.data['userId'][idxTest],self.data['name'][idxTest],self.data['rating'][idxTest]])  
+
+    def countData(self):
+        self.DataProcess()
+        for user in self.listUserId:
+            self.position[user] = [[], 0]
+        for idx in range(self.numberOfInstances):
+            user = self.userId[idx]
+            self.position[user][0].append(idx)
+            self.position[user][1] += 1     
 
     def RandomSplitting(self):
         self.DataProcess()
@@ -28,19 +51,19 @@ class TrainAndTestSplitting(object):
         rand.shuffle(shuffleList)
         for idxTrain in range(self.numberOfTrain):
             self.dataTrain.append([self.data['userId'][shuffleList[idxTrain]],self.data['name'][shuffleList[idxTrain]],self.data['rating'][shuffleList[idxTrain]]])
-        # self.dataTrain = pd.DataFrame(data = self.dataTrain, columns = ["userId","name","rating"])    
         for idxTest in range(self.numberOfTest):
             self.dataTest.append([self.data['userId'][shuffleList[self.numberOfTrain + idxTest]],self.data['name'][shuffleList[self.numberOfTrain + idxTest]],self.data['rating'][shuffleList[self.numberOfTrain + idxTest]]])    
-        # self.dataTest = pd.DataFrame(data = self.dataTest, columns = ["userId","name","rating"])    
 
-    def trainAndTestSplitting(self, trainSize = 0.9, testSize = 0.1):
+    def trainAndTestSplitting(self, trainSize = 0.99, testSize = 0.01):
         if (trainSize + testSize > 1):
             return "ERROR: Train set and test size are too big!!!"
         self.trainSize = trainSize
         self.testSize = testSize
         self.numberOfTrain = int(self.trainSize * self.numberOfInstances)
         self.numberOfTest  = self.numberOfInstances - self.numberOfTrain
-        self.RandomSplitting()
+        # self.RandomSplitting()
+        self.countData()
+        self.StratifiedSplitting()
         self.writeCSV()
 
     def writeCSV(self):
@@ -55,8 +78,7 @@ class TrainAndTestSplitting(object):
             writer = csv.writer(f)
             writer.writerow(['userId','name','rating'])
             writer.writerows(self.dataTest)   
-       
-    
+
+
 t = TrainAndTestSplitting(dp.test.dataMatrix)
 t.trainAndTestSplitting()
-# print(t.dataTrain)

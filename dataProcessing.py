@@ -3,9 +3,8 @@ import numpy as np
 
 
 class dataProcessing(object):
-    def __init__ (self, listUserFile):
+    def __init__ (self, listUserFile, notTrain = True):
         self.listUserFile      = listUserFile
-        # self.listGameFile      = listGameFile
         self.dataGame          = None
         self.listNameGame      = None
         self.listGame          = None
@@ -19,63 +18,70 @@ class dataProcessing(object):
         self.numberOfGame      = None      
         self.dataMatrix        = None
         self.dataTable         = None
+        self.notTrain          = notTrain
+        self.dataMatrixTest    = None
 
     def PreProcessingCSV(self):
-        # self.dataGame = pd.read_csv(self.listGameFile)
-        # self.listNameGame = self.dataGame.drop(
-        #     columns = [
-        #                 'appid','release_date', 'english', 'developer', 'publisher', 'platforms', 'required_age','categories', 'genres', 'steamspy_tags',
-        #                 'achievements', 'positive_ratings', 'negative_ratings','average_playtime', 'median_playtime', 'owners', 'price'
-        #             ]
-        # )
-        # self.numberOfGame = len(self.listNameGame)
-        self.dataUser = pd.read_csv(self.listUserFile)
-        self.listUser = self.dataUser.drop(columns = ["0"])
-        self.listUser = self.listUser[(self.listUser['behavior'] == 'play')]
-        self.listUser = self.listUser[self.listUser.groupby('name').userId.transform(len) >= 10]
-        self.listGame = list(set(self.listUser['name'].values.tolist()))
-        self.listGame = pd.DataFrame(data = self.listGame, columns = ['name'])
-        self.numberOfGame = len(self.listGame)
-        self.listUserId = self.listUser.drop(columns = ["name", "behavior", "hours"])
-        self.listUserId = list(set(self.listUserId['userId'].values.tolist()))
-        self.listUserId = pd.DataFrame(data = self.listUserId, columns = ['userId'])
-        self.numberOfUser = len(self.listUserId)
-        self.listBehavior = self.listUser.drop(columns = ["userId", "name", "hours"])
+        if self.notTrain:
+            self.dataUser = pd.read_csv(self.listUserFile)
+            self.listUser = self.dataUser.drop(columns = ["0"])
+            self.listUser = self.listUser[(self.listUser['behavior'] == 'play')]
+            self.listUser = self.listUser[self.listUser.groupby('name').userId.transform(len) >= 20]
+            self.listUser = self.listUser[self.listUser.groupby('userId').name.transform(len) >= 10]
+            self.listGame = list(set(self.listUser['name'].values.tolist()))
+            self.listGame = pd.DataFrame(data = self.listGame, columns = ['name'])
+            self.numberOfGame = len(self.listGame)
+            self.listUserId = self.listUser.drop(columns = ["name", "behavior", "hours"])
+            self.listUserId = list(set(self.listUserId['userId'].values.tolist()))
+            self.listUserId = pd.DataFrame(data = self.listUserId, columns = ['userId'])
+            self.numberOfUser = len(self.listUserId)
+            self.listBehavior = self.listUser.drop(columns = ["userId", "name", "hours"])
+        else:
+            self.dataMatrix = pd.read_csv("Train_" + self.listUserFile)
+            self.dataMatrixTest = pd.read_csv("Test_" + self.listUserFile)
+            self.listUserId = list(set(self.dataMatrixTest['userId'].values.tolist()))
+            self.listGame = list(set(self.dataMatrix['name'].values.tolist()))
+            self.listGame = pd.DataFrame(data = self.listGame, columns = ['name'])
 
-    
     def CreateDataMatrix(self):
-        self.PreProcessingCSV()
-        self.CalAveragePlayedTime()
-        self.CalRatingGame()
-        self.dataTable = self.listGame.merge(self.listUser, how = 'left', on = 'name')
-        self.dataMatrix = self.dataTable.drop(columns = ["behavior","hours","avg_hourplayed"])
-        self.dataMatrix = self.dataMatrix[(self.dataMatrix["userId"].notnull())]
-        self.listUser = self.listUser.drop(columns = ["behavior"])
-        # print(self.dataMatrix)
-
+        if self.notTrain:
+            self.dataTable = self.listGame.merge(self.listUser, how = 'left', on = 'name')
+            self.dataMatrix = self.dataTable.drop(columns = ["behavior","hours","avg_hourplayed"])
+            self.dataMatrix = self.dataMatrix[(self.dataMatrix["userId"].notnull())]
+            self.listUser = self.listUser.drop(columns = ["behavior"])
 
     def CalAveragePlayedTime(self):
-        self.listUser['name'].nunique()
-        self.listUser['name'] = self.listUser['name'].astype(str)
-        self.averagePlayedTime = self.listUser.groupby(['name'], as_index = False).hours.mean()
-        self.averagePlayedTime['avg_hourplayed'] = self.averagePlayedTime['hours']
-        self.averagePlayedTime.drop(columns = 'hours', inplace = True)
-        self.listUser = self.listUser.merge(self.averagePlayedTime, how = 'left', on = 'name')
+        if self.notTrain:
+            self.listUser['name'].nunique()
+            self.listUser['name'] = self.listUser['name'].astype(str)
+            self.averagePlayedTime = self.listUser.groupby(['name'], as_index = False).hours.mean()
+            self.averagePlayedTime['avg_hourplayed'] = self.averagePlayedTime['hours']
+            self.averagePlayedTime.drop(columns = 'hours', inplace = True)
+            self.listUser = self.listUser.merge(self.averagePlayedTime, how = 'left', on = 'name')
 
     def CalRatingGame(self):
-        condition = [
-            self.listUser['hours'] >= (0.8 * self.listUser['avg_hourplayed']),
-            (self.listUser['hours'] >= 0.6 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.8 * self.listUser['avg_hourplayed']),
-            (self.listUser['hours'] >= 0.4 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.6 * self.listUser['avg_hourplayed']),
-            (self.listUser['hours'] >= 0.2 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.4 * self.listUser['avg_hourplayed']),
-             self.listUser['hours'] >= 0
-        ]
-        values = [5, 4, 3, 2, 1]
-        self.listUser['rating'] = np.select(condition,values)
+        if self.notTrain:
+            condition = [
+                    self.listUser['hours'] >= (0.8 * self.listUser['avg_hourplayed']),
+                    (self.listUser['hours'] >= 0.6 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.8 * self.listUser['avg_hourplayed']),
+                    (self.listUser['hours'] >= 0.4 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.6 * self.listUser['avg_hourplayed']),
+                    (self.listUser['hours'] >= 0.2 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.4 * self.listUser['avg_hourplayed']),
+                    self.listUser['hours'] >= 0
+                ]
+            values = [5, 4, 3, 2, 1]
+            self.listUser['rating'] = np.select(condition,values)
+
+    def fit(self):
+        self.PreProcessingCSV()
+        if self.notTrain:
+            self.CalAveragePlayedTime()
+            self.CalRatingGame()
+            self.CreateDataMatrix()
+
+
 
 filename1 = "steam_user.csv"
 test = dataProcessing(filename1)
-test.CreateDataMatrix()
-# print(test.dataMatrix)
-# print(test.dataMatrix[test.dataMatrix['name'] == "Dota 2"])
-# print(test.listUser)
+test.fit()
+# print(test.listUserId)
+# print(test.numberOfUser)
