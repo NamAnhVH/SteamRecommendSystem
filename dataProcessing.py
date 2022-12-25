@@ -6,6 +6,7 @@ class dataProcessing(object):
     def __init__ (self, listUserFile, notTrain = True):
         self.listUserFile      = listUserFile
         self.dataGame          = None
+        self.dataUserId        = None
         self.listNameGame      = None
         self.listGame          = None
         self.dataUser          = None
@@ -30,6 +31,7 @@ class dataProcessing(object):
             self.listUser = self.listUser[self.listUser.groupby('userId').name.transform(len) >= 10]
             self.listGame = list(set(self.listUser['name'].values.tolist()))
             self.listGame = pd.DataFrame(data = self.listGame, columns = ['name'])
+            self.dataGame = self.listGame
             self.numberOfGame = len(self.listGame)
             self.listUserId = self.listUser.drop(columns = ["name", "behavior", "hours"])
             self.listUserId = list(set(self.listUserId['userId'].values.tolist()))
@@ -40,8 +42,9 @@ class dataProcessing(object):
             self.dataMatrix = pd.read_csv("Train_" + self.listUserFile)
             self.dataMatrixTest = pd.read_csv("Test_" + self.listUserFile)
             self.listUserId = list(set(self.dataMatrixTest['userId'].values.tolist()))
+            self.dataUserId = pd.DataFrame(data = self.listUserId, columns = ['userId'])
             self.listGame = list(set(self.dataMatrix['name'].values.tolist()))
-            self.listGame = pd.DataFrame(data = self.listGame, columns = ['name'])
+            self.dataGame = pd.DataFrame(data = self.listGame, columns = ['name'])
 
     def CreateDataMatrix(self):
         if self.notTrain:
@@ -78,10 +81,7 @@ class dataProcessing(object):
             self.CalRatingGame()
             self.CreateDataMatrix()
 
-
-
 filename1 = "steam_user.csv"
 test = dataProcessing(filename1)
 test.fit()
-# print(test.listUserId)
-# print(test.numberOfUser)
+

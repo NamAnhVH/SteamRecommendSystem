@@ -4,46 +4,71 @@ import pandas as pd
 import csv
 
 class TrainAndTestSplitting(object):
-    def __init__(self,dataMatrix):
+    def __init__(self,dataMatrix,uu = 1):
         self.numberOfInstances = len(dataMatrix)
         self.data              = dataMatrix
         self.dataTrain         = []
         self.dataTest          = []
-        self.dataTrainPos       = []          
-        self.dataTestingPos     = []          
+        self.dataTrainPos      = []          
+        self.dataTestingPos    = []          
         self.numberOfTrain     = None
         self.numberOfTest      = None
         self.trainSize         = None
         self.testSize          = None
-        self.position           = {}
+        self.position          = {}
         self.listUserId        = None
+        self.listGame          = None
+        self.uu                = uu
         
     def DataProcess(self):
         self.listUserId = list(set(self.data['userId'].values.tolist()))
+        self.listGame = list(set(self.data['name'].values.tolist()))
         self.userId = self.data['userId'].values.tolist()
+        self.game = self.data['name'].values.tolist()
         self.numberOfUser = len(self.listUserId)
+        self.numberOfGame = len(self.listGame)
         self.listIndex = self.data.index
 
     def StratifiedSplitting(self):
-        for user in self.listUserId:
-            self.position[user][1] /= self.numberOfInstances
-            rand.shuffle(self.position[user][0])
-            k = int(self.numberOfTrain * self.position[user][1])
-            self.dataTrainPos.extend(self.position[user][0][: k])
-            self.dataTestingPos.extend(self.position[user][0][k :])
-        for idxTrain in self.dataTrainPos:
-            self.dataTrain.append([self.data['userId'][idxTrain],self.data['name'][idxTrain],self.data['rating'][idxTrain]])
-        for idxTest in self.dataTestingPos:
-            self.dataTest.append([self.data['userId'][idxTest],self.data['name'][idxTest],self.data['rating'][idxTest]])  
+        if self.uu:
+            for user in self.listUserId:
+                self.position[user][1] /= self.numberOfInstances
+                rand.shuffle(self.position[user][0])
+                k = int(self.numberOfTrain * self.position[user][1])
+                self.dataTrainPos.extend(self.position[user][0][: k])
+                self.dataTestingPos.extend(self.position[user][0][k :])
+            for idxTrain in self.dataTrainPos:
+                self.dataTrain.append([self.data['userId'][idxTrain],self.data['name'][idxTrain],self.data['rating'][idxTrain]])
+            for idxTest in self.dataTestingPos:
+                self.dataTest.append([self.data['userId'][idxTest],self.data['name'][idxTest],self.data['rating'][idxTest]])
+        else:
+            for item in self.listGame:
+                self.position[item][1] /= self.numberOfInstances
+                rand.shuffle(self.position[item][0])
+                k = int(self.numberOfTrain * self.position[item][1])
+                self.dataTrainPos.extend(self.position[item][0][: k])
+                self.dataTestingPos.extend(self.position[item][0][k :])
+            for idxTrain in self.dataTrainPos:
+                self.dataTrain.append([self.data['userId'][idxTrain],self.data['name'][idxTrain],self.data['rating'][idxTrain]])
+            for idxTest in self.dataTestingPos:
+                self.dataTest.append([self.data['userId'][idxTest],self.data['name'][idxTest],self.data['rating'][idxTest]])
 
     def countData(self):
         self.DataProcess()
-        for user in self.listUserId:
-            self.position[user] = [[], 0]
-        for idx in range(self.numberOfInstances):
-            user = self.userId[idx]
-            self.position[user][0].append(idx)
-            self.position[user][1] += 1     
+        if self.uu:
+            for user in self.listUserId:
+                self.position[user] = [[], 0]
+            for idx in range(self.numberOfInstances):
+                user = self.userId[idx]
+                self.position[user][0].append(idx)
+                self.position[user][1] += 1
+        else:
+            for item in self.listGame:
+                self.position[item] = [[], 0]
+            for idx in range(self.numberOfInstances):
+                item = self.game[idx]
+                self.position[item][0].append(idx)
+                self.position[item][1] += 1                 
 
     def RandomSplitting(self):
         self.DataProcess()
@@ -80,5 +105,5 @@ class TrainAndTestSplitting(object):
             writer.writerows(self.dataTest)   
 
 
-t = TrainAndTestSplitting(dp.test.dataMatrix)
+t = TrainAndTestSplitting(dp.test.dataMatrix,1)
 t.trainAndTestSplitting()

@@ -7,10 +7,12 @@ import numpy as np
 import tkinter as tk
 
 filename = "steam_user.csv"
-Input = dp.dataProcessing(filename,TRUE)
+Input = dp.dataProcessing(filename,True)
 Input.fit()
-cf = CF.CF(Input.dataMatrix,Input.listGame,Input.notTrain)
+cf = CF.CF(Input.dataMatrix,Input.dataUserId,Input.dataGame,1,Input.notTrain)
 cf.CreateSimilarityTable()
+cf1 = CF.CF(Input.dataMatrix,Input.dataUserId,Input.dataGame,0,Input.notTrain)
+cf1.CreateSimilarityTable()
 
 class GUI(tk.Tk):
     def __init__(self):
@@ -19,6 +21,7 @@ class GUI(tk.Tk):
         self.panelButton           = None
         self.panelList             = None
         self.panelData             = None
+        self.panelDataRating       = None
         self.listNameGame          = None
         self.listUserId            = None
         self.Button1               = None
@@ -37,10 +40,12 @@ class GUI(tk.Tk):
         self.panelButton = PanedWindow(self.window,width = 50, height = 30)
         self.panelList = PanedWindow(self.window, width = 50, height = 30)
         self.panelData = PanedWindow(self.window, width = 50, height = 30)
+        self.panelDataRating = PanedWindow(self.panelData,width = 50, height = 30)
 
         self.panelButton.grid(column = 0, row = 0)
         self.panelList.grid(column = 1, row = 0)
         self.panelData.grid(column = 2, row = 0)
+        self.panelDataRating.grid(column = 0, row = 1)
 
     def ShowListGame(self):
         if self.listUserIdInvisible:
@@ -68,13 +73,22 @@ class GUI(tk.Tk):
         for line in range(len(dataUser)):
             listSelectedUser.insert("",END,values = [dataUser['name'][locationUser[line]],dataUser['hours'][locationUser[line]],dataUser['rating'][locationUser[line]]])
         listSelectedUser.grid(column = 0, row = 0)
-        recommendGame = Treeview(self.panelData, columns = ["name","predictRating"], show = 'headings')
+
+        recommendGame = Treeview(self.panelDataRating, columns = ["name","predictRating"], show = 'headings')
         recommendGame.heading("name", text = "Tên game được gợi ý")
         recommendGame.heading("predictRating", text = "Dự đoán rating")
         data = cf.Recommend(int(selectedUser))
         for i in range (5):
             recommendGame.insert("",END,values = [data['game'][i],data['rating'][i]])
-        recommendGame.grid(column = 0, row = 1)        
+        recommendGame.grid(column = 0, row = 0)
+
+        recommendGameI = Treeview(self.panelDataRating, columns = ["name","predictRating"], show = 'headings')
+        recommendGameI.heading("name", text = "Tên game được gợi ý")
+        recommendGameI.heading("predictRating", text = "Dự đoán rating")
+        data1 = cf1.Recommend(int(selectedUser))
+        for i in range (5):
+            recommendGameI.insert("",END,values = [data1['game'][i],data1['rating'][i]])
+        recommendGameI.grid(column = 1, row = 0)         
 
     def ShowUserHaveGame(self,event):
         selectedAllGame = self.listNameGame.curselection()
