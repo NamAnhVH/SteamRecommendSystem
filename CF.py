@@ -54,7 +54,6 @@ class CF(object):
             dataRatedI = pd.concat([dataRatedI,listUserSimilarityU], axis=1)
             dataRatedI['total'] = dataRatedI['rate_point'] * dataRatedI[u]
             return np.sum(dataRatedI['total']) / (np.sum(abs(dataRatedI[u])) + 1e-8) + self.listAverageUserRating[u]
-
         else:
             item_rated_by_u = self.dataMatrix['name'][self.dataMatrix['userId'] == int(u)].tolist()
             listItemSimilarityI = self.SimilarityTable.loc[i][item_rated_by_u]
@@ -67,35 +66,19 @@ class CF(object):
             return np.sum(dataRatedByU['total']) / (np.sum(abs(dataRatedByU[i])) + 1e-8) + self.listAverageItemRating[i]
         
     def Recommend(self, u):
-        if self.uu:
-            locationUser = self.dataMatrix[self.dataMatrix['userId'] == int(u)].index
-            items_rated_by_u = self.dataMatrix['name'].iloc[locationUser].tolist()
-            def take_energy(power):
+        def take_energy(power):
                 return power['rating']
-            game = {'game': None, 'rating': None}
-            list_game = []
-            listGame = self.listGame['name'].tolist()
-            for i in range(len(listGame)):
-                if listGame[i] not in items_rated_by_u:
-                    count = self.PredictRating(u, listGame[i])
-                    game['game'] = listGame[i]
-                    game['rating'] = count
-                    list_game.append(game.copy())
-        else:
-            locationUser = self.dataMatrix[self.dataMatrix['userId'] == int(u)].index
-            items_rated_by_u = self.dataMatrix['name'].iloc[locationUser].tolist()
-            def take_energy(power):
-                return power['rating']
-            game = {'game': None, 'rating': None}
-            list_game = []
-            listGame = self.listGame['name'].tolist()
-            # print(listGame)
-            for i in range(len(listGame)):
-                if listGame[i] not in items_rated_by_u:
-                    count = self.PredictRating(u, listGame[i])
-                    game['game'] = listGame[i]
-                    game['rating'] = count
-                    list_game.append(game.copy())
+        game = {'game': None, 'rating': None}
+        list_game = []
+        listGame = self.listGame['name'].tolist()
+        locationUser = self.dataMatrix[self.dataMatrix['userId'] == int(u)].index
+        items_rated_by_u = self.dataMatrix['name'].iloc[locationUser].tolist()
+        for i in range(len(listGame)):
+            if listGame[i] not in items_rated_by_u:
+                count = self.PredictRating(u, listGame[i])
+                game['game'] = listGame[i]
+                game['rating'] = count
+                list_game.append(game.copy())
         sorted_game = sorted(list_game, key = take_energy, reverse = True)
         if self.notTrain:
             sorted_game = sorted_game[0:self.top]
@@ -108,7 +91,6 @@ class CF(object):
     def RMSE(self, u, data, dataMatrixTest):
         if self.notTrain == False:
             SE = 0
-            # if self.uu:
             listGameTest = dataMatrixTest[dataMatrixTest['userId'] == u]
             location = listGameTest.index
             for i in range(len(listGameTest)):
@@ -117,6 +99,22 @@ class CF(object):
             ans = np.sqrt(SE/len(listGameTest))
             print(ans)
             return ans
+
+
+
+# filename = "steam_user.csv"
+# Input = dp.dataProcessing(filename,False)
+# Input.fit()
+# cf = CF(Input.dataMatrix,Input.dataUserId,Input.dataGame,0,Input.notTrain,100)
+# cf.CreateSimilarityTable()
+# print(cf.Recommend(151603712)) 
+# # print(len(Input.listUserId))
+
+# ans = 0
+# for u in Input.listUserId:  
+#     ans += cf.Recommend(u)
+# ans = ans/len(Input.listUserId)
+# print(ans)
 
 # datatest = [[1,1,5],[1,2,4],[1,4,2],[1,5,2],
 #             [2,1,5],[2,3,4],[2,4,2],[2,5,0],
@@ -135,35 +133,13 @@ class CF(object):
 #             [7,3,1],[7,4,5],[7,5,4],
 #             ]
 # dataMatrix = pd.DataFrame(data = datatest, columns = ["userId","name","rating"])
-# # print(dataMatrix)
 # listGame = [1,2,3,4,5]
 # listUserId = [1,2,3,4,5,6,7]
 # listGame = pd.DataFrame(data = listGame, columns = ['name'] )
 # listUserId = pd.DataFrame(data = listUserId, columns = ['userId'])
-# cf = CF(dataMatrix,listUserId,listGame,0,True,2)
+# cf = CF(dataMatrix,listUserId,listGame,1,True,2)
 # cf.CreateSimilarityTable()
-# # print(cf.listAverageItemRating)
-# # print(cf.matrixTable)
-# # print(cf.SimilarityTable)
-# print(cf.Recommend(7))
-
-filename = "steam_user.csv"
-Input = dp.dataProcessing(filename,False)
-Input.fit()
-cf = CF(Input.dataMatrix,Input.dataUserId,Input.dataGame,0,Input.notTrain,100)
-cf.CreateSimilarityTable()
-# print(cf.Recommend(151603712)) 
-# # print(len(Input.listUserId))
-
-# ans = 0
-# for u in Input.listUserId:  
-#     ans += cf.Recommend(u)
-# ans = ans/len(Input.listUserId)
-# print(1)
-# print(ans)
-# print(1)
-
-
+# print(cf.Recommend(2))
 
 
 
