@@ -43,7 +43,7 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
   
    Dựa vào kết quả trên, ta có thể đánh giá tập dữ liệu phù hợp với hướng tiếp cận Item-Item hơn so với hướng tiếp cận User-User.
 
-## Run like a dog
+## Run 
 
   Yêu cầu hệ thống:
   - [Cài đặt python](https://www.python.org/downloads)
@@ -53,7 +53,7 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
   - [Clone git repository](https://github.com/NamAnhVH/SteamRecommendSystem.git) hoặc download zip.
   - Chạy file TrainAndTestSplitting.py`python TrainAndTestSplitting.py`
   - Chạy file gui.py`python gui.py`
-  - Lựa chọn ListUser để hiện danh sách User
+  - Lựa chọn ListUser để hiện danh sách User sau đó lựa chọn user muốn được gợi ý
 
 ## Reference
 
