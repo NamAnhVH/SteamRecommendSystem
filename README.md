@@ -34,13 +34,13 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
   ![image](https://user-images.githubusercontent.com/105763597/210488064-cfa1062c-fd1e-4d09-87f5-0bb2e1758a87.png)
 
     Sau khi đánh giá kết quả 10 bộ Train, Test khác nhau:
-  
-  ![image](https://user-images.githubusercontent.com/104374448/210417568-2513c01b-f435-418d-aa46-d2f5d78f1cb0.png)
+    
+  ![image](https://user-images.githubusercontent.com/105763597/210541629-dd18a110-fb32-4919-a5f0-5aa15c47a95c.png)
    
     Và kết quả thu được với *k* `(nearest- neaighbor)` lần lượt là `[1, 2, 5, 10, 15, 20, 30, 50, 100]`
   
-  ![image](https://user-images.githubusercontent.com/104374448/210417218-476831f5-b63a-4ae7-8056-99ab055b269a.png)
-  
+  ![image](https://user-images.githubusercontent.com/105763597/210541669-3ad3ce89-f8c7-41d1-b4fc-6522ae1eed80.png)
+
    Dựa vào kết quả trên, ta có thể đánh giá tập dữ liệu phù hợp với hướng tiếp cận Item-Item hơn so với hướng tiếp cận User-User.
 
 ## Run 
