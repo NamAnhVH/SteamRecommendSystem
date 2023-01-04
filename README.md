@@ -13,6 +13,7 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
 
 ## Collaborative Filtering
 
+
 ### 1. User-User
 
   Dựa vào mức độ quan tâm của user tới item và sự tương đồng với user khác để đưa ra gợi ý.
@@ -24,7 +25,7 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
 
 ## Training and Test
 
-  Chúng tôi chia tập dữ liệu sau xử lí thành 2 tập:
+  Chạy file TrainAndTestSplitting.py để chia tập dữ liệu thành 2 tập:
   - *Train (99%)* 
   - *Test (1%)*
   
@@ -41,6 +42,18 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
   ![image](https://user-images.githubusercontent.com/104374448/210417218-476831f5-b63a-4ae7-8056-99ab055b269a.png)
   
    Dựa vào kết quả trên, ta có thể đánh giá tập dữ liệu phù hợp với hướng tiếp cận Item-Item hơn so với hướng tiếp cận User-User.
+
+## Run like a dog
+
+  Yêu cầu hệ thống:
+  - [Cài đặt python](https://www.python.org/downloads)
+  - Cài đặt thư viện cần thiết: numpy`pip install numpy`, pandas`pip install pandas`, sklearn`pip install sklearn`, thinker`pip install thinker`, random`pip install random`, csv`pip install csv`
+ 
+  Chạy chương trình:
+  - [Clone git repository](https://github.com/NamAnhVH/SteamRecommendSystem.git) hoặc download zip.
+  - Chạy file TrainAndTestSplitting.py`python TrainAndTestSplitting.py`
+  - Chạy file gui.py`python gui.py`
+  - Lựa chọn ListUser để hiện danh sách User
 
 ## Reference
 
