@@ -65,10 +65,10 @@ class dataProcessing(object):
     def CalRatingGame(self):
         if self.notTrain:
             condition = [
-                    self.listUser['hours'] >= (0.8 * self.listUser['avg_hourplayed']),
-                    (self.listUser['hours'] >= 0.6 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.8 * self.listUser['avg_hourplayed']),
-                    (self.listUser['hours'] >= 0.4 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.6 * self.listUser['avg_hourplayed']),
-                    (self.listUser['hours'] >= 0.2 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.4 * self.listUser['avg_hourplayed']),
+                    self.listUser['hours'] >= (1.5 * self.listUser['avg_hourplayed']),
+                    (self.listUser['hours'] >= 1 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 1.5 * self.listUser['avg_hourplayed']),
+                    (self.listUser['hours'] >= 0.6 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 1 * self.listUser['avg_hourplayed']),
+                    (self.listUser['hours'] >= 0.2 * self.listUser['avg_hourplayed']) & (self.listUser['hours'] < 0.6 * self.listUser['avg_hourplayed']),
                     self.listUser['hours'] >= 0
                 ]
             values = [5, 4, 3, 2, 1]
