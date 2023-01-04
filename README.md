@@ -2,7 +2,7 @@
 
 Đây là một dự án mà nhóm chúng tôi tạo ra để tìm hiểu kiến thức cơ bản của Machine Learning.
 
-Một số thư viện mà chúng tôi sử dụng trong project: `numpy, pandas, sklearn, thinker, random, csv`. 
+Một số thư viện mà chúng tôi sử dụng trong project: `numpy, pandas, sklearn, tkinter, random, csv`. 
 Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợi ý cho người dùng các game mà người dùng có thể thích (quan tâm) dựa trên tập dữ liệu lấy từ [Steam Video Games | Kaggle](https://www.kaggle.com/datasets/tamber/steam-video-games?fbclid=IwAR3MSJ8ZaHPzQ5oUSXrGMXCNhTay5MDUO7srL9d7efFFw0YGWljnU5vNYDk).   
 
 ## Data Processing
@@ -47,7 +47,7 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
 
   Yêu cầu hệ thống:
   - [Cài đặt python](https://www.python.org/downloads)
-  - Cài đặt thư viện cần thiết: numpy`pip install numpy`, pandas`pip install pandas`, sklearn`pip install sklearn`, thinker`pip install thinker`, random`pip install random`, csv`pip install csv`
+  - Cài đặt thư viện cần thiết: numpy`pip install numpy`, pandas`pip install pandas`, sklearn`pip install sklearn`, tkinter`pip install tkinter`, random`pip install random`, csv`pip install csv`
  
   Chạy chương trình:
   - [Clone git repository](https://github.com/NamAnhVH/SteamRecommendSystem.git) hoặc download zip.
