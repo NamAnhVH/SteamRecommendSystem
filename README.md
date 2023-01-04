@@ -31,7 +31,7 @@ Dự án sử dụng thuật toán `Collaborative Filtering` để đưa ra gợ
   
   Và tỉ lệ các user trong 2 tập Train và Test cũng được chia theo tỉ lệ trên và sử dụng hàm `Root Mean Squared Error (RMSE)` để tính sai số.
   
-  RMSE = √((∑_(i=1)^n▒〖(d(x)-o(x))〗^2 )/n)
+  ![image](https://user-images.githubusercontent.com/105763597/210488064-cfa1062c-fd1e-4d09-87f5-0bb2e1758a87.png)
 
     Sau khi đánh giá kết quả 10 bộ Train, Test khác nhau:
   
